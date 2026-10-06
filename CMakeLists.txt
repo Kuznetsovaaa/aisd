@@ -13,4 +13,5 @@ target_sources("${PROJECT_NAME}"
         FILES
             "Point.cppm"
             "Polyline.cppm"
+            "Geometry.cppm"
 )

@@ -1,6 +1,7 @@
 export module Polyline;
 
 import Point;
+import Geometry;
 
 export template <typename T>
 class Polyline
@@ -53,6 +54,42 @@ public:
     Polyline(int vertex_count)
         : vertices(new Point<T>[vertex_count]), size(vertex_count)
     {
+    }
+
+    Polyline(int vertex_count, const Point<T>& start_point)
+        : vertices(new Point<T>[vertex_count]), size(vertex_count)
+    {
+        if (vertex_count <= 2)
+        {
+            delete[] vertices;
+            vertices = nullptr;
+            size = 0;
+            return;
+        }
+
+        double pi = 3.14159265358979323846;
+        double angle_step = 2.0 * pi / vertex_count;
+
+        vertices[0] = start_point;
+
+        double start_x = static_cast<double>(start_point.x);
+        double start_y = static_cast<double>(start_point.y);
+
+        for (int i = 1; i < vertex_count; ++i)
+        {
+            double angle = angle_step * i;
+
+            double cosine_value = cosine(angle);
+            double sine_value = sine(angle);
+
+            vertices[i].x = static_cast<T>(
+                start_x * cosine_value - start_y * sine_value
+                );
+
+            vertices[i].y = static_cast<T>(
+                start_x * sine_value + start_y * cosine_value
+                );
+        }
     }
 
     Polyline(const Polyline& other)
@@ -148,7 +185,6 @@ public:
 
             double distance_squared =
                 coordinate_square(dx) + coordinate_square(dy);
-
             result += square_root(distance_squared);
         }
 
