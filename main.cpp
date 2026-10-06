@@ -57,5 +57,10 @@ int main()
 
     std::cout << prepended[0].x << ' ' << prepended[0].y << '\n';
     std::cout << prepended[1].x << ' ' << prepended[1].y << '\n';
+    Polyline<double> double_line(3);
+    double_line[0] = { 0.0, 0.0 };
+    double_line[1] = { 3.0, 4.0 };
+    double_line[2] = { 6.0, 4.0 };
+    std::cout << double_line.length() << '\n';
     return 0;
 }
