@@ -1,5 +1,5 @@
 import Point;
-import Polyline; 
+import Polyline;
 
 #include <complex>
 #include <iostream>
@@ -7,7 +7,9 @@ import Polyline;
 int main()
 {
     Point<int> int_point{ 1, 2 };
+
     Point<float> float_point{ 1.5f, 2.5f };
+
     Point<double> double_point{ 1.5, 2.5 };
 
     std::complex<float> complex_float_x{ 1.5f, 2.5f };
@@ -26,9 +28,23 @@ int main()
         complex_double_y
     };
 
-    std::cout<< int_point.x << ' ' << int_point.y << '\n';
+    std::cout << int_point.x << ' ' << int_point.y << '\n';
     std::cout << float_point.x << ' ' << float_point.y << '\n';
     std::cout << double_point.x << ' ' << double_point.y << '\n';
+
+    Polyline <int> first(3);
+
+    first[0] = { 1, 2 };
+    first[1] = { 3, 4 };
+    first[2] = { 5, 6 };
+
+    Polyline<int> second(first);
+
+    Polyline<int> third(3);
+    third = first;
+
+    std::cout << second[0].x << ' ' << second[0].y << '\n';
+    std::cout << third[2].x << ' ' << third[2].y << '\n';
 
     return 0;
 }
