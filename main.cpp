@@ -46,5 +46,16 @@ int main()
     std::cout << second[0].x << ' ' << second[0].y << '\n';
     std::cout << third[2].x << ' ' << third[2].y << '\n';
 
+    Point<int> point{ 10,20 };
+    Polyline<int> combined = first + second;
+    Polyline<int> appended = first + point;
+    Polyline<int> prepended = point + first;
+    std::cout << combined[0].x << ' ' << combined[0].y << '\n';
+    std::cout << combined[3].x << ' ' << combined[3].y << '\n';
+
+    std::cout << appended[3].x << ' ' << appended[3].y << '\n';
+
+    std::cout << prepended[0].x << ' ' << prepended[0].y << '\n';
+    std::cout << prepended[1].x << ' ' << prepended[1].y << '\n';
     return 0;
 }

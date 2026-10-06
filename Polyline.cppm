@@ -47,7 +47,39 @@ public:
 	{
 		return vertices[index];
 	}
-
+	Polyline operator+(const Polyline& other) const
+	{
+		Polyline result(size + other.size);
+		for (int i = 0; i < size; ++i)
+		{
+			result[i] = vertices[i];
+		}
+		for (int i = 0; i < other.size; ++i)
+		{
+			result[size + i] = other.vertices[i];
+		}
+		return result;
+	}
+	Polyline operator+(const Point<T>& point) const
+	{
+		Polyline result(size + 1);
+		for (int i = 0; i < size; ++i)
+		{
+			result[i] = vertices[i];
+		}
+		result[size] = point;
+		return result;
+	}
+	friend Polyline operator+(const Point<T>& point, const Polyline& line)
+	{
+		Polyline result(line.size + 1);
+		result[0] = point;
+		for (int i = 0; i < line.size; ++i)
+		{
+			result[i + 1] = line.vertices[i];
+		}
+		return result;
+	}
 	~Polyline()
 	{
 		delete[] vertices;
