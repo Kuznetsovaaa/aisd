@@ -46,29 +46,46 @@ private:
     }
 
 public:
+    // Empty polyline
     Polyline()
         : vertices(nullptr), size(0)
     {
     }
 
+    // Polyline with a specified number of points
     Polyline(int vertex_count)
-        : vertices(new Point<T>[vertex_count]), size(vertex_count)
+        : vertices(nullptr), size(0)
     {
-    }
-
-    Polyline(int vertex_count, const Point<T>& start_point)
-        : vertices(new Point<T>[vertex_count]), size(vertex_count)
-    {
-        if (vertex_count <= 2)
+        if (vertex_count <= 0)
         {
-            delete[] vertices;
-            vertices = nullptr;
-            size = 0;
             return;
         }
 
-        double pi = 3.14159265358979323846;
-        double angle_step = 2.0 * pi / vertex_count;
+        vertices = new Point<T>[vertex_count];
+        size = vertex_count;
+    }
+
+    // Polyline consisting of one point
+    Polyline(const Point<T>& point)
+        : vertices(new Point<T>[1]), size(1)
+    {
+        vertices[0] = point;
+    }
+
+    // Regular polygon with a specified starting point
+    Polyline(int vertex_count, const Point<T>& start_point)
+        : vertices(nullptr), size(0)
+    {
+        if (vertex_count <= 2)
+        {
+            return;
+        }
+
+        vertices = new Point<T>[vertex_count];
+        size = vertex_count;
+
+        const double pi = 3.14159265358979323846;
+        const double angle_step = 2.0 * pi / vertex_count;
 
         vertices[0] = start_point;
 
@@ -92,22 +109,48 @@ public:
         }
     }
 
-    Polyline(const Polyline& other)
-        : vertices(new Point<T>[other.size]), size(other.size)
+    // Polyline with coordinates in the specified range
+    Polyline(int vertex_count, double minimum, double maximum)
+        : vertices(nullptr), size(0)
     {
-        for (int i = 0; i < size; ++i)
+        if (vertex_count <= 0)
         {
-            vertices[i] = other.vertices[i];
+            return;
+        }
+
+        vertices = new Point<T>[vertex_count];
+        size = vertex_count;
+
+        if (vertex_count == 1)
+        {
+            double value = (minimum + maximum) / 2.0;
+
+            vertices[0].x = static_cast<T>(value);
+            vertices[0].y = static_cast<T>(value);
+
+            return;
+        }
+
+        for (int i = 0; i < vertex_count; ++i)
+        {
+            double ratio =
+                static_cast<double>(i)
+                / static_cast<double>(vertex_count - 1);
+
+            double value =
+                minimum + (maximum - minimum) * ratio;
+
+            vertices[i].x = static_cast<T>(value);
+            vertices[i].y = static_cast<T>(value);
         }
     }
 
-    Polyline& operator=(const Polyline& other)
+    // Copy constructor
+    Polyline(const Polyline& other)
+        : vertices(nullptr), size(other.size)
     {
-        if (this != &other)
+        if (size > 0)
         {
-            delete[] vertices;
-
-            size = other.size;
             vertices = new Point<T>[size];
 
             for (int i = 0; i < size; ++i)
@@ -115,20 +158,47 @@ public:
                 vertices[i] = other.vertices[i];
             }
         }
+    }
+
+    // Copy assignment operator
+    Polyline& operator=(const Polyline& other)
+    {
+        if (this != &other)
+        {
+            Point<T>* new_vertices = nullptr;
+
+            if (other.size > 0)
+            {
+                new_vertices = new Point<T>[other.size];
+
+                for (int i = 0; i < other.size; ++i)
+                {
+                    new_vertices[i] = other.vertices[i];
+                }
+            }
+
+            delete[] vertices;
+
+            vertices = new_vertices;
+            size = other.size;
+        }
 
         return *this;
     }
 
+    // Read/write access to a vertex
     Point<T>& operator[](int index)
     {
         return vertices[index];
     }
 
+    // Read-only access to a vertex
     const Point<T>& operator[](int index) const
     {
         return vertices[index];
     }
 
+    // Concatenation of two polylines
     Polyline operator+(const Polyline& other) const
     {
         Polyline result(size + other.size);
@@ -146,6 +216,7 @@ public:
         return result;
     }
 
+    // Adding a point to the end
     Polyline operator+(const Point<T>& point) const
     {
         Polyline result(size + 1);
@@ -160,6 +231,7 @@ public:
         return result;
     }
 
+    // Adding a point to the beginning
     friend Polyline operator+(const Point<T>& point, const Polyline& line)
     {
         Polyline result(line.size + 1);
@@ -174,6 +246,7 @@ public:
         return result;
     }
 
+    // Calculate the length of the polyline
     double length() const
     {
         double result = 0.0;
@@ -184,7 +257,9 @@ public:
             T dy = vertices[i].y - vertices[i - 1].y;
 
             double distance_squared =
-                coordinate_square(dx) + coordinate_square(dy);
+                coordinate_square(dx)
+                + coordinate_square(dy);
+
             result += square_root(distance_squared);
         }
 
